@@ -1,0 +1,24 @@
+# ---- How to build this project into an installable package ----
+[build-system]
+requires = ["setuptools>=68"]           # the build tool needed, version 68 or newer
+build-backend = "setuptools.build_meta" # the entry point pip calls on that tool
+
+# ---- Who this project is ----
+[project]
+name = "civicpulse"                     # the installable name; matches the package folder in src/
+version = "0.1.0"                       # major.minor.patch; changes as the project matures
+description = "NYC 311 analytics data platform"
+readme = "README.md"                    # shown on package pages; points at the existing README
+requires-python = ">=3.11"              # pip refuses to install on older Pythons
+dependencies = []                       # libraries the pipeline needs at runtime
+
+# ---- Extras: only installed when asked for ----
+[project.optional-dependencies]
+dev = [                                 # a group named "dev": tools for developers, not production
+  "pytest>=8",                          # test runner
+  "ruff>=0.6",                          # linter and formatter
+]
+
+# ---- Where setuptools should look for your code ----
+[tool.setuptools.packages.find]
+where = ["src"]                         # look inside src/
