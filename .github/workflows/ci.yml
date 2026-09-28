@@ -1,0 +1,33 @@
+name: CI                                   # the label shown in GitHub's "Actions" tab
+
+on:                                        # WHEN should this workflow run?
+  pull_request:                            # every time a PR is opened or updated...
+    branches: [main]                       # ...that targets main
+  push:                                    # also whenever commits land directly on...
+    branches: [main]                       # ...main (i.e. after each merge), as a safety net
+
+permissions:
+  contents: read                           # least privilege: the workflow may read the repo, but not change it
+
+concurrency:                               # avoid wasting minutes on stale runs
+  group: ci-${{ github.ref }}              # one run per branch at a time
+  cancel-in-progress: true                 # if you push again, cancel the older run
+
+jobs:                                      # a workflow is made of jobs
+  lint-and-test:                           # this job's ID; the branch rule will refer to it by this name
+    runs-on: ubuntu-latest                 # GitHub lends a fresh Linux machine for each run
+    steps:                                 # a job is a list of steps, run in order
+      - uses: actions/checkout@v7.0.1      # "uses" = a ready-made action; this one downloads the repo onto the machine
+      - uses: actions/setup-python@v7.0.0  # installs Python on the machine
+        with:                              # "with" = inputs for the action above
+          python-version: "3.11"           # the SAME version used locally, so "works on my machine" means something
+          cache: pip                       # reuse downloaded packages between runs to save time
+          cache-dependency-path: pyproject.toml   # refresh that cache whenever the dependencies change
+      - name: Install dependencies
+        run: pip install -e ".[dev]"       # "run" = a shell command; identical to what was typed locally
+      - name: Lint
+        run: ruff check .                  # fails the job on code-quality errors
+      - name: Check formatting
+        run: ruff format --check .         # fails if code isn't formatted (checks only, changes nothing)
+      - name: Test
+        run: pytest                        # fails if any test fails
