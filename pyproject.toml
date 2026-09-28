@@ -22,3 +22,17 @@ dev = [                                 # a group named "dev": tools for develop
 # ---- Where setuptools should look for your code ----
 [tool.setuptools.packages.find]
 where = ["src"]                         # look inside src/
+
+# ---- Ruff: linter + formatter ----
+[tool.ruff]
+line-length = 100          # lines longer than this get wrapped (default is 88; 100 suits SQL-heavy strings and Azure names)
+target-version = "py311"   # only allow syntax and suggestions valid for Python 3.11
+
+[tool.ruff.lint]
+select = [                 # rule families to enable; ruff's default set is small, so I'm opting in to more
+  "E",                     # pycodestyle errors: basic style problems
+  "F",                     # pyflakes: unused imports/variables, undefined names (real bugs)
+  "I",                     # isort: keeps imports sorted and grouped
+  "B",                     # bugbear: patterns that are legal but very likely bugs
+  "UP",                    # pyupgrade: replaces outdated syntax with modern equivalents
+]
