@@ -17,6 +17,7 @@ dependencies = []                       # libraries the pipeline needs at runtim
 dev = [                                 # a group named "dev": tools for developers, not production
   "pytest>=8",                          # test runner
   "ruff>=0.6",                          # linter and formatter
+  "pre-commit>=3.8",                    # runs checks automatically before each commit
 ]
 
 # ---- Where setuptools should look for your code ----

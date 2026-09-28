@@ -1,0 +1,15 @@
+repos:                                           # where the checks come from
+  - repo: https://github.com/astral-sh/ruff-pre-commit   # the ruff team's own pre-commit package
+    rev: v0.16.9                                 # the version to use; matches the ruff installed
+    hooks:                                       # "hook" = one check
+      - id: ruff-check                           # lint: looks for likely bugs
+        args: [--fix]                            # fix the safe problems automatically
+      - id: ruff-format                          # format: tidies spacing and line length
+  - repo: https://github.com/pre-commit/pre-commit-hooks   # a collection of small, useful checks
+    rev: v6.0.0                                  # placeholder; the next command updates it
+    hooks:
+      - id: end-of-file-fixer                    # makes every file end with one new line
+      - id: trailing-whitespace                  # removes invisible spaces at line ends
+      - id: check-yaml                           # catches broken YAML (like ci.yml) early
+      - id: check-added-large-files              # stops committing huge files by accident
+      - id: detect-private-key                   # blocks from committing a private key
