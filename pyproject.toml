@@ -1,0 +1,38 @@
+# ---- How to build this project into an installable package ----
+[build-system]
+requires = ["setuptools>=68"]           # the build tool needed, version 68 or newer
+build-backend = "setuptools.build_meta" # the entry point pip calls on that tool
+
+# ---- Who this project is ----
+[project]
+name = "civicpulse"                     # the installable name; matches the package folder in src/
+version = "0.1.0"                       # major.minor.patch; changes as the project matures
+description = "NYC 311 analytics data platform"
+readme = "README.md"                    # shown on package pages; points at the existing README
+requires-python = ">=3.11"              # pip refuses to install on older Pythons
+dependencies = []                       # libraries the pipeline needs at runtime
+
+# ---- Extras: only installed when asked for ----
+[project.optional-dependencies]
+dev = [                                 # a group named "dev": tools for developers, not production
+  "pytest>=8",                          # test runner
+  "ruff>=0.6",                          # linter and formatter
+]
+
+# ---- Where setuptools should look for your code ----
+[tool.setuptools.packages.find]
+where = ["src"]                         # look inside src/
+
+# ---- Ruff: linter + formatter ----
+[tool.ruff]
+line-length = 100          # lines longer than this get wrapped (default is 88; 100 suits SQL-heavy strings and Azure names)
+target-version = "py311"   # only allow syntax and suggestions valid for Python 3.11
+
+[tool.ruff.lint]
+select = [                 # rule families to enable; ruff's default set is small, so I'm opting in to more
+  "E",                     # pycodestyle errors: basic style problems
+  "F",                     # pyflakes: unused imports/variables, undefined names (real bugs)
+  "I",                     # isort: keeps imports sorted and grouped
+  "B",                     # bugbear: patterns that are legal but very likely bugs
+  "UP",                    # pyupgrade: replaces outdated syntax with modern equivalents
+]
