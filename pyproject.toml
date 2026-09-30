@@ -10,7 +10,9 @@ version = "0.1.0"                       # major.minor.patch; changes as the proj
 description = "NYC 311 analytics data platform"
 readme = "README.md"                    # shown on package pages; points at the existing README
 requires-python = ">=3.11"              # pip refuses to install on older Pythons
-dependencies = []                       # libraries the pipeline needs at runtime
+dependencies = [                        # libraries the pipeline needs at runtime
+  "requests>=2.3",
+]
 
 # ---- Extras: only installed when asked for ----
 [project.optional-dependencies]
