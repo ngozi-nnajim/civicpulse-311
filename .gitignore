@@ -225,3 +225,6 @@ __marimo__/
 *.tfstate*
 *.tfvars*
 *.tfvars.*
+
+# --- Local runtime state (not code, changes every run, don't commit) ---
+data/
