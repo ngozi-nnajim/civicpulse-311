@@ -1,6 +1,12 @@
 """Code that talks to the NYC 311 API and brings data into the program."""
 
+import json  # allows for reading and writing simple data as a file
+from pathlib import Path
+
 import requests  # the library that lets Python make web requests
+
+# Store and remember the last time this pipeline successfully ran.
+LAST_RUN_FILE = Path("data/last_run.json")
 
 # The web address for the dataset
 API_URL = "https://data.cityofnewyork.us/resource/erm2-nwe9.json"
@@ -57,3 +63,24 @@ def get_open_requests(limit: int = 1000) -> list[dict]:
     )
     response.raise_for_status()
     return response.json()
+
+
+def save_last_run(timestamp: str) -> None:
+    """Remember the time of this run, so tomorrow's run knows where to start from.
+
+    timestamp: a date/time string, e.g. "2026-09-29T00:00:00.000"
+    """
+    # make the "data" folder if it doesn't exist yet
+    LAST_RUN_FILE.parent.mkdir(parents=True, exist_ok=True)
+    LAST_RUN_FILE.write_text(json.dumps({"last_run": timestamp}))
+
+
+def load_last_run() -> str | None:
+    """Read back the last remembered run time, if one exists.
+
+    Returns: the timestamp string, or None if the pipeline has never run before.
+    """
+    if not LAST_RUN_FILE.exists():
+        return None  # first time ever running, nothing to go on yet
+    data = json.loads(LAST_RUN_FILE.read_text())
+    return data["last_run"]
