@@ -5,7 +5,7 @@ from unittest.mock import patch  # lets swapping out a real thing for a fake one
 from civicpulse.extract import get_requests
 
 
-def test_get_requests_returns_the_rows_the_api_sent(monkeypatch=None) -> None:
+def test_get_requests_returns_the_rows_the_api_sent() -> None:
     """get_requests should hand back exactly what the API responded with, unchanged."""
     fake_rows = [{"unique_key": "1"}, {"unique_key": "2"}]  # pretend this is what the API sent back
 
