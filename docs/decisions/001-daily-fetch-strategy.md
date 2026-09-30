@@ -18,5 +18,12 @@ Two queries are needed as outlined in `Decision` above (Query for `Brand-new req
 
 When a row that already exists is fetched (say, a request that moved from Open to Assigned), its existing copy would need to be updated, not added as a duplicate. This only works because every request has a unique_key. This kind of "update if it exists, insert if it's new" operation is called an upsert.
 
+## Implementation
+The `get_open_requests` function fetches data for all statuses that are not Closed, including all Unspecified rows, regardless of closed_date.
+
+This is intentional because it is important to keep re-checking `Unspecified` rows until their status becomes `Closed`, so that a row transitioning from `no-closed_date` to having one is not missed or left out.
+
+The actual open/closed interpretation for `Unspecified` happens later, in SQL, not in this fetch. This way, the extraction code stays intact in an event where the rules for `Unspecified` changes; only the SQL query changes.
+
 ## Open questions
 There needs to be a way to remember when the last run was to determine how far back to search for new requests. It is not yet decided where this information should be stored.
