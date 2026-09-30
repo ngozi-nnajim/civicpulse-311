@@ -19,3 +19,41 @@ def get_requests(limit: int = 5) -> list[dict]:
     )
     response.raise_for_status()  # if the server sent back an error, stop here and say so
     return response.json()  # turn the API's text reply into Python lists/dictionaries
+
+
+def get_new_requests(since: str, limit: int = 1000) -> list[dict]:
+    """Ask the API for requests created after a given point in time.
+
+    since: a date/time string, e.g. "2026-09-29T00:00:00.000"
+    limit: how many rows to ask for at once (the API caps this at 1000)
+    Returns: a list of rows, where each row is a dictionary.
+    """
+    response = requests.get(
+        API_URL,
+        params={
+            "$where": f"created_date > '{since}'",  # only rows created after "since"
+            "$limit": limit,
+        },
+        timeout=30,
+    )
+    response.raise_for_status()
+    return response.json()
+
+
+def get_open_requests(limit: int = 1000) -> list[dict]:
+    """Ask the API for every request that isn't Closed yet.
+
+    limit: how many rows to ask for at once (the API caps this at 1000 anyway)
+    Returns: a list of rows, where each row is a dictionary.
+    """
+    response = requests.get(
+        API_URL,
+        params={
+            # anything not Closed: Open, Assigned, In Progress, etc.
+            "$where": "status != 'Closed'",
+            "$limit": limit,
+        },
+        timeout=30,
+    )
+    response.raise_for_status()
+    return response.json()
