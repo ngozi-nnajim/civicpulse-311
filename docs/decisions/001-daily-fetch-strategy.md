@@ -41,3 +41,5 @@ There needs to be a way to remember when the last run was to determine how far b
 3. Right now, the pipeline does not implement retries while fetching a page. Also, if a single page's request times out or fails partway through a long fetch, the successfully-fetched pages are never saved. This is because `all_rows` (the fetched data) exists only in `get_new_requests` and `get_open_requests`'s own local memory. If an exception (like a timeout) happens partway through the loop, it prevents the function from returning `all_rows`, which simply disappears when the function crashes, taken with it as the function exits. Since it never returns, `run_daily_fetch` never receives any rows back, and therefore never calls `save_raw_requests` at all.
 
 This has not been fixed as it is a big enough problem to deserve its own dedicated step, not a rushed addition.
+
+4. The PostgreSQL admin password is currently stored in a local, gitignored `terraform.tfvars` file, not Azure Key Vault. This works for solo development but isn't production-grade secret management. Deferred due to the project deadline; Key Vault integration is a clear next step.
