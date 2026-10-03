@@ -17,3 +17,5 @@ RAW_DATA_DIR = Path("data/raw")
 
 # Store and remember the last time this pipeline successfully ran.
 LAST_RUN_FILE = Path("data/last_run.json")
+LOG_FILE = Path("data/pipeline.log")
+LOG_LEVEL = "INFO"  # INFO = normal progress; DEBUG = more detail; ERROR = only failures
