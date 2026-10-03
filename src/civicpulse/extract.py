@@ -1,9 +1,13 @@
 """Code that talks to the NYC 311 API and brings data into the program."""
 
 import json  # allows for reading and writing simple data as a file
+from datetime import UTC, datetime  # for generating today's date, to use in the filename
 from pathlib import Path
 
 import requests  # the library that lets Python make web requests
+
+# where raw, unmodified API data lands (temporary stand-in for Blob Storage's Bronze layer)
+RAW_DATA_DIR = Path("data/raw")
 
 # Store and remember the last time this pipeline successfully ran.
 LAST_RUN_FILE = Path("data/last_run.json")
@@ -84,3 +88,19 @@ def load_last_run() -> str | None:
         return None  # first time ever running, nothing to go on yet
     data = json.loads(LAST_RUN_FILE.read_text())
     return data["last_run"]
+
+
+def save_raw_requests(rows: list[dict], label: str) -> Path:
+    """Save fetched rows to a local file, named by today's date and a label.
+
+    rows: the data gotten from the API, exactly as received
+    label: what kind of fetch this was, e.g. "new" or "open"
+    Returns: the path of the file just written, useful for logging or tests
+    """
+    RAW_DATA_DIR.mkdir(parents=True, exist_ok=True)
+
+    today = datetime.now(UTC).strftime("%Y-%m-%d")  # e.g. "2026-09-30"
+    file_path = RAW_DATA_DIR / f"{today}-{label}.json"
+
+    file_path.write_text(json.dumps(rows))
+    return file_path
