@@ -1,5 +1,7 @@
 """Tests for the code that talks to the 311 API."""
 
+import json
+from datetime import UTC, datetime  # for generating today's date, to use in the filename
 from unittest.mock import patch  # lets swapping out a real thing for a fake one, just for a test
 
 from civicpulse import extract
@@ -59,3 +61,25 @@ def test_save_and_load_last_run_round_trip(tmp_path, monkeypatch) -> None:
     result = extract.load_last_run()
 
     assert result == "2026-09-29T12:00:00.000"
+
+
+def test_save_raw_fetched_data_to_disk_by_date(tmp_path, monkeypatch) -> None:
+    """Saved raw fetched data name should include date timestamp and label"""
+    # fake rows
+    fake_rows = [{"unique_key": "1", "created_date": "2026-09-29T10:00:00.000"}]
+
+    today = datetime.now(UTC).strftime("%Y-%m-%d")
+    label = "open"
+
+    # a throwaway file path, unique to this test, auto-deleted afterward
+    fake_dir = tmp_path / "raw"
+
+    # temporarily point the code at the fake file
+    monkeypatch.setattr(extract, "RAW_DATA_DIR", fake_dir)
+
+    data = extract.save_raw_requests(fake_rows, label)
+    data_name = data.name
+    saved_content = json.loads(data.read_text())
+
+    assert data_name == f"{today}-{label}.json"
+    assert saved_content == fake_rows
