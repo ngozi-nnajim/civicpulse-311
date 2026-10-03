@@ -225,6 +225,7 @@ __marimo__/
 *.tfstate*
 *.tfvars*
 *.tfvars.*
+!terraform.tfvars.example
 
 # --- Local runtime state (not code, changes every run, don't commit) ---
 data/
