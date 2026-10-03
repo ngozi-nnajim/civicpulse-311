@@ -82,3 +82,43 @@ def test_save_raw_requests_names_file_by_date_and_label(tmp_path, monkeypatch) -
 
     assert data_name == f"{today}-{label}.json"
     assert saved_content == fake_rows
+
+
+def test_get_new_requests_pages_through_multiple_requests() -> None:
+    """get_new_requests should keep asking for more pages until a
+    page comes back smaller than the limit.
+    """
+    page_1 = [{"unique_key": "1"}, {"unique_key": "2"}]
+    page_2 = [{"unique_key": "3"}]
+
+    with (
+        patch("civicpulse.extract.requests.get") as mock_get,
+        patch("civicpulse.extract.time.sleep"),
+    ):
+        mock_get.return_value.raise_for_status.return_value = None
+        mock_get.return_value.json.side_effect = [page_1, page_2]
+
+        result = get_new_requests(since="2026-09-29T00:00:00.000", limit=2)
+
+    assert result == page_1 + page_2
+    assert mock_get.call_count == 2
+
+
+def test_get_open_requests_pages_through_multiple_requests() -> None:
+    """get_open_requests should keep asking for more pages until a
+    page comes back smaller than the limit.
+    """
+    page_1 = [{"unique_key": "1"}, {"unique_key": "2"}]
+    page_2 = [{"unique_key": "3"}]
+
+    with (
+        patch("civicpulse.extract.requests.get") as mock_get,
+        patch("civicpulse.extract.time.sleep"),
+    ):
+        mock_get.return_value.raise_for_status.return_value = None
+        mock_get.return_value.json.side_effect = [page_1, page_2]
+
+        result = get_open_requests(limit=2)
+
+    assert result == page_1 + page_2
+    assert mock_get.call_count == 2
