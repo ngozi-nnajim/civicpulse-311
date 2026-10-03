@@ -30,3 +30,8 @@ The actual open/closed interpretation for `Unspecified` happens later, in SQL, n
 
 ## Open questions
 There needs to be a way to remember when the last run was to determine how far back to search for new requests. It is not yet decided where this information should be stored.
+
+## Known limitations
+1. The functions to get new and open requests (`get_new_requests`, and `get_open_requests`) have a limit of 1000 rows returned per request which mirrors the API's own threshold. If more than 1000 new or open requests exist since the last check, only the first 1000 are fetched, the rest are silently dropped and lost forever, since `since` moves forward past them once `save_last_run` runs.
+
+2. The pipeline currently doesn't have logging to record progress. If it fails partway through, there is no way to know what failed, where the failure came from and when it happened.
