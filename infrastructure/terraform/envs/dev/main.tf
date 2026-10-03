@@ -16,3 +16,22 @@ resource "azurerm_storage_container" "raw" {
   storage_account_name  = azurerm_storage_account.main.name
   container_access_type = "private"
 }
+
+resource "azurerm_postgresql_flexible_server" "main" {
+  name                   = "civicpulse-311-postgres"
+  resource_group_name    = azurerm_resource_group.main.name
+  location                = azurerm_resource_group.main.location
+  version                 = "16"
+  administrator_login     = "civicpulse_admin"
+  administrator_password  = var.postgres_admin_password
+  sku_name                = "B_Standard_B1ms"
+  storage_mb              = 32768
+  zone                    = "1"
+}
+
+resource "azurerm_postgresql_flexible_server_database" "main" {
+  name      = "civicpulse"
+  server_id = azurerm_postgresql_flexible_server.main.id
+  collation = "en_US.utf8"
+  charset   = "UTF8"
+}
