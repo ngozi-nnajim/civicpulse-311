@@ -63,18 +63,17 @@ def test_save_and_load_last_run_round_trip(tmp_path, monkeypatch) -> None:
     assert result == "2026-09-29T12:00:00.000"
 
 
-def test_save_raw_fetched_data_to_disk_by_date(tmp_path, monkeypatch) -> None:
-    """Saved raw fetched data name should include date timestamp and label"""
-    # fake rows
+def test_save_raw_requests_names_file_by_date_and_label(tmp_path, monkeypatch) -> None:
+    """save_raw_requests should name the file by date and label, and save the rows unchanged."""
     fake_rows = [{"unique_key": "1", "created_date": "2026-09-29T10:00:00.000"}]
 
     today = datetime.now(UTC).strftime("%Y-%m-%d")
     label = "open"
 
-    # a throwaway file path, unique to this test, auto-deleted afterward
+    # a throwaway folder, unique to this test, auto-deleted afterward
     fake_dir = tmp_path / "raw"
 
-    # temporarily point the code at the fake file
+    # temporarily point the code at the fake folder
     monkeypatch.setattr(extract, "RAW_DATA_DIR", fake_dir)
 
     data = extract.save_raw_requests(fake_rows, label)
