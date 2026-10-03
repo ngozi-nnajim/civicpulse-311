@@ -34,4 +34,10 @@ There needs to be a way to remember when the last run was to determine how far b
 ## Known limitations
 1. The functions to get new and open requests (`get_new_requests`, and `get_open_requests`) have a limit of 1000 rows returned per request which mirrors the API's own threshold. If more than 1000 new or open requests exist since the last check, only the first 1000 are fetched, the rest are silently dropped and lost forever, since `since` moves forward past them once `save_last_run` runs.
 
+`Update:` Pagination has now been fixed, and is no longer an open problem. It is implemented using `$offset`, and looping (with a `while loop`) until a page returns fewer than `limit` (1000) rows.
+
 2. The pipeline currently doesn't have logging to record progress. If it fails partway through, there is no way to know what failed, where the failure came from and when it happened.
+
+3. Right now, the pipeline does not implement retries while fetching a page. Also, if a single page's request times out or fails partway through a long fetch, no data is saved at all, including data from pages fetched successfully.
+
+This has not been fixed as it is a big enough problem to deserve its own dedicated step, not a rushed addition.
