@@ -9,6 +9,7 @@ from civicpulse.extract import (
     save_last_run,
     save_raw_requests,
 )
+from civicpulse.load import load_bronze_requests
 
 LOG_FILE.parent.mkdir(parents=True, exist_ok=True)
 
@@ -55,7 +56,11 @@ def run_daily_fetch() -> None:
 
     save_raw_requests(new_requests, "new")
     save_raw_requests(open_requests, "open")
-    logger.info("Saved raw data")
+    logger.info("Saved raw data locally")
+
+    load_bronze_requests(new_requests, "new")
+    load_bronze_requests(open_requests, "open")
+    logger.info("Loaded data into PostgreSQL")
 
     save_last_run(current_time)
     logger.info("Daily fetch complete")
