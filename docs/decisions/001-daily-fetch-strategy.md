@@ -25,6 +25,8 @@ This is intentional because it is important to keep re-checking `Unspecified` ro
 
 The actual open/closed interpretation for `Unspecified` happens later, in SQL, not in this fetch. This way, the extraction code stays intact in an event where the rules for `Unspecified` changes; only the SQL query changes.
 
+**Update:** After testing Silver with real data, found a row with status="Open" but a real closed_date present. Revised the is_open rule: any row with a closed_date is treated as not open, regardless of status text. This is simpler and more reliable than trusting status alone, since status can lag or disagree with the actual closed_date fact.
+
 ## When to record the last run
 `save_last_run` must only be called after data has been successfully saved to Blob Storage, not before or during the fetch. If it were called earlier and the save to Blob Storage step failed, those rows would be lost forever, it would be wrongly assumed that the new rows for that time period have been saved when they've not. Calling it only after success means a failed run just gets retried tomorrow, safe because loading uses an upsert, so repeating a row causes no harm, as the row is updated not duplicated.
 
