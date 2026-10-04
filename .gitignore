@@ -229,3 +229,6 @@ __marimo__/
 
 # --- Local runtime state (not code, changes every run, don't commit) ---
 data/
+
+# --- macOS ---
+.DS_Store
