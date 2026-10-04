@@ -45,3 +45,13 @@ There needs to be a way to remember when the last run was to determine how far b
 This has not been fixed as it is a big enough problem to deserve its own dedicated step, not a rushed addition.
 
 4. The PostgreSQL admin password is currently stored in a local, gitignored `terraform.tfvars` file, not Azure Key Vault. This works for solo development but isn't production-grade secret management. Deferred due to the project deadline; Key Vault integration is a clear next step.
+
+## Deferred for the Monday deadline
+The following were consciously deferred rather than rushed:
+- **Retries on API timeouts**: not yet implemented, a mid-fetch timeout currently loses all progress from that run (see "Known limitations" above).
+- **Key Vault**: secrets currently live in gitignored `.env` and `terraform.tfvars`, not Azure Key Vault.
+- **Automated scheduling**: the pipeline is currently triggered manually (`python -m civicpulse.pipeline`), not via Airflow or Data Factory.
+- **Blob Storage**: provisioned via Terraform but not yet used; raw data currently lands in local `data/raw/` files instead.
+- **Metabase instead of Power BI**: Power BI Service requires a work/school email to sign up, which blocked access. Metabase used as a substitute, same underlying Gold tables, same four dashboards.
+
+These are intended as the next steps after the deadline, to bring the project to the original architecture: API/Excel → Blob Storage → Azure Data Factory → PostgreSQL → Power BI/Metabase, plus retry logic and more robust data capture.
